@@ -67,8 +67,7 @@ class App extends Component {
           age={person.age} click={this.deleteNameHandler.bind(index)}
           changed={(event)=> this.switchNameHandler(event, person.id)}  />
       })}
-
-
+      
       </div>)
     }
     return (
