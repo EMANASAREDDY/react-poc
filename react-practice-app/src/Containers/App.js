@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
 import Persons from '../Components/Persons/persons';
+import Cockpit from '../Components/Cockpit/Cockpit';
+import withClass from '../hoc/withClass';
+import Classes from '../Containers/App.css';
+import Aux from '../hoc/Auxiliary.js' ;
+import AuthContext from '../context/auth-context';
+
 class App extends Component {
+    constructor(props){
+        super(props);
+        console.log('[App.js] constructor');
+    }
+    
     state = {
         persons: [
             { id: 1, name: 'Salla Ramesh', age: 29 },
@@ -8,7 +19,30 @@ class App extends Component {
             { id: 3, name: 'bhavishya', age: 2 }
         ],
         address: 'hyd',
-        showPersons: false
+        showPersons: false,
+        showCockpit: true,
+        changeCounter:0,
+        authenticated:false
+
+    }
+    static getDerivedStateFromProps(props,state){
+        console.log('[App.js] getDerivedFromProps',props);
+        return state;
+    }
+    //componentWillMount(){
+        //console.log('[App.js] componentWillMount');
+   // }
+   shouldComponentUpdate(nextProps,nextState)
+   {
+       console.log('[App.js] shouldComponentUpdate');
+       return true;
+   }
+   componentDidUpdate(){
+       console.log('[App.js] componentDidUpdate')
+   }
+    componentDidMount(){
+        console.log('[App.js] componentDidMount');
+
     }
     switchNameHandler = (event, id) => {
         const personIndex = this.state.persons.findIndex(person => { return person.id === id });
@@ -22,10 +56,14 @@ class App extends Component {
         console.log(event.target.value);
         const persons = [...this.state.persons];
         persons[personIndex] = person;
-        this.setState({ persons: persons });
+        this.setState((prevState,props)=>{
+            return{
+                 persons: persons, 
+                 changeCounter:prevState.changeCounter+1 
 
-
-    }
+    };
+    });
+}
     deleteNameHandler = (index) => {
         // let dpersons = this.state.persons.slice();
         let dpersons = [...this.state.persons];
@@ -49,40 +87,48 @@ class App extends Component {
     togglePersonsHandler = () => {
         const doesShow = this.state.showPersons;
         this.setState({ showPersons: !doesShow });
-
-
     }
+        loginHandler=()=>{
+            this.setState({authenticated: true});
+        }
+
+
+    
 
     render() {
-        const manStyle = {
-            border: '5px blue'
-        }
+        console.log('[App.js] render');
+        
         let persons = null;
         if (this.state.showPersons) {
             persons =(
-            <div>
+        
                 <Persons 
                 persons={this.state.persons}
                 clicked={this.deleteNameHandler}
-                changed={this.switchNameHandler}/>
+            changed={this.switchNameHandler}
+            isAuthenticated={this.state.authenticated}/>);
     
 
-            </div>
-            );
+            
+            
         }
         return (
 
-            <div >
-                <h1 style={manStyle}> I am Manasa</h1>
-                <p>bhavishya is my kid</p>
-                {/*  Static values
-       <Person name="ramesh"  age="28"/>
-       <Person name="Bhavishya" age="3">My hobbies:reading</Person>
-       <Person name="manasa" age="25"/> */}
-                <button onClick={this.togglePersonsHandler} className="button">switch name</button>
-                {persons}
+            <Aux>
+                <button  onClick={()=>{this.setState({showCockpit:false});}}>Cockpit Remove</button>
+                <AuthContext.Provider value={{authenticated:this.state.authenticated,login:this.loginHandler}}>
+                {this.state.showCockpit ? (
+               <Cockpit 
+               title={this.props.appTitle}
+               showPersons={this.state.showPersons}
+               Persons={this.state.persons}
+                clicked={this.togglePersonsHandler}
+                login={this.loginHandler}/> ):null}
 
-            </div>
+                {persons}
+                </AuthContext.Provider>
+
+        </Aux>
 
         );
         //React based elements
@@ -90,4 +136,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default withClass(App,Classes.App);
