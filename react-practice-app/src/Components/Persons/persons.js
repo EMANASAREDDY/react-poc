@@ -1,74 +1,60 @@
-import React from 'react';
+import React, {PureComponent} from 'react';
 import Person from './person/person.js'
-const persons = (props) => 
-  props.persons.map((person, index) => {
+class Persons extends PureComponent{
+  constructor(props) {
+    super(props);
+    console.log('[persons.js] Inside constructor', props);
+    this.state = {
+        persons: [
+            { id: 1, name: 'Salla Ramesh', age: 29 },
+            { id: 2, name: 'manasa', age: 26 },
+            { id: 3, name: 'bhavishya', age: 2 }
+        ],
+        address: 'hyd',
+        showPersons: false,
+        changeCounter: 0,
+        authenticated: false
+    }
+}
+componentWillMount() {
+    console.log('[persons.js]  Inside componentWillMount()');
+}
+componentDidMount() {
+    console.log('[persons.js] inside componentDidMount()')
+}
+componentWillReceiveProps(nextProps){
+console.log('[UPDATE persons.js] componentWillReceiveProps',nextProps);
+}
+//shouldComponentUpdate(nextProps,nextState){
+//console.log('[UPDATE persons.js] shouldComponentUpdate',nextProps,nextState);
+  //return nextProps.persons!==this.props.persons||
+        // nextProps.changed!==this.props.changed||
+       //  nextProps.clicked!==this.props.clicked;
+ //return true;
+//}
+componentWillUpdate(nextProps,nextState){
+  console.log('[UPDATE persons.js] componentWillUpdate()',nextProps,nextState);
+}
+componentDidUpdate(){
+  console.log('[UPDATE persons.js] componentDidUpdate()');
+}
+  
 
-    return <Person
-      click={() => this.props.clicked(index)}
-      key={person.id} name={person.name}
-      age={person.age}
-      changed={(event) => this.props.changed(event, person.id)}/>
-  });
-
-
-
-export default persons;
-
-
-
-
-
-
-{/*import React, { PureComponent } from 'react';
-import Person from './person/person';
-class persons extends PureComponent {
-  //static getDerivedStateFromProps(props,state){
-  //console.log('[persons.js] getDerivedStateFromProps');
-  //return state;
-  // }
-  //componentWillReceiveProps(props) {
-    //console.log('[persons.js] componentWillReceiveProps', props);
-  //}
-  //shouldComponentUpdate(nextProps, nextState) {
-   // console.log('[persons.js] shouldComponentUpdate');
-    //if (nextProps.persons !== this.props.persons ||
-     // nextProps.clicked !== this.props.clicked ||
-     // nextProps.changed !== this.props.changed
-    //) {
-//return true;
-  //  } else {
-     // return false;
-   // }
-    // return true;
-
-  //}
-   getSnapshotBeforeUpdate(prevProps,prevState){
- console.log('[persons.js] getSnapshotBeforeUpdate');
-  return {message: 'Snapshot'};
-  }
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log('[persons.js] componentDidUpdate');
-    console.log(snapshot);
-  }
-  componentWillUnmount() {
-    console.log('[persons.js] componentWillUnmount');
-  }
-
-  render() {
-    console.log('[persons.js] rendering...');
-
+  render(){
+    console.log('[person.js] inside rendering')
     return this.props.persons.map((person, index) => {
 
-      return <Person click={() => this.props.clicked(index)}
+      return <Person
+        click={() => this.props.clicked(index)}
         key={person.id} name={person.name}
         age={person.age}
-        changed={(event) => this.props.changed(event, person.id)}
-        isAuth={this.props.isAuthenticated} />
-    }
-    );
+        changed={(event) =>this.props.changed(event, person.id)}/>
+    });
+  
+  
   }
+}
+  
 
-};
 
-
-export default persons;*/}
+export default Persons;

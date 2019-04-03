@@ -1,49 +1,43 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Persons from '../Components/Persons/persons';
-import Cockpit from '../Components/Cockpit/Cockpit';
-import withClass from '../hoc/withClass';
+import Cockpit from '../Components/Cockpit/Cockpit.js';
 import Classes from '../Containers/App.css';
-import Aux from '../hoc/Auxiliary.js' ;
-import AuthContext from '../context/auth-context';
-
-class App extends Component {
-    constructor(props){
+import withClass from '../hoc/withClass';
+import Aux from '../hoc/Auxiliary';
+class App extends PureComponent {
+    constructor(props) {
         super(props);
-        console.log('[App.js] constructor');
+        console.log('[App.js] Inside constructor', props);
+        this.state = {
+            persons: [
+                { id: 1, name: 'Salla Ramesh', age: 29 },
+                { id: 2, name: 'manasa', age: 26 },
+                { id: 3, name: 'bhavishya', age: 2 }
+            ],
+            address: 'hyd',
+            showPersons: false,
+            changeCounter: 0,
+            authenticated: false
+        }
     }
-    
-    state = {
-        persons: [
-            { id: 1, name: 'Salla Ramesh', age: 29 },
-            { id: 2, name: 'manasa', age: 26 },
-            { id: 3, name: 'bhavishya', age: 2 }
-        ],
-        address: 'hyd',
-        showPersons: false,
-        showCockpit: true,
-        changeCounter:0,
-        authenticated:false
+    componentWillMount() {
+        console.log('[App.js]  Inside componentWillMount()');
+    }
+    componentDidMount() {
+        console.log('[App.js] inside componentDidMount()')
+    }
+   // shouldComponentUpdate(nextProps,nextState){
+        //console.log('[UPDATE App.js] shouldComponentUpdate',nextProps,nextState);
+        //return nextState.persons!==this.state.persons||
+        //nextState.showPersons!==this.state.showPersons;
+      //}
+      componentWillUpdate(nextProps,nextState){
+        console.log('[UPDATE App.js] componentWillUpdate()',nextProps,nextState);
+      }
+      componentDidUpdate(){
+        console.log('[UPDATE App.js] componentDidUpdate()');
+      }
 
-    }
-    static getDerivedStateFromProps(props,state){
-        console.log('[App.js] getDerivedFromProps',props);
-        return state;
-    }
-    //componentWillMount(){
-        //console.log('[App.js] componentWillMount');
-   // }
-   shouldComponentUpdate(nextProps,nextState)
-   {
-       console.log('[App.js] shouldComponentUpdate');
-       return true;
-   }
-   componentDidUpdate(){
-       console.log('[App.js] componentDidUpdate')
-   }
-    componentDidMount(){
-        console.log('[App.js] componentDidMount');
-
-    }
     switchNameHandler = (event, id) => {
         const personIndex = this.state.persons.findIndex(person => { return person.id === id });
         console.log(personIndex);
@@ -56,14 +50,14 @@ class App extends Component {
         console.log(event.target.value);
         const persons = [...this.state.persons];
         persons[personIndex] = person;
-        this.setState((prevState,props)=>{
-            return{
-                 persons: persons, 
-                 changeCounter:prevState.changeCounter+1 
+        this.setState((prevState, props) => {
+            return {
+                persons: persons,
+                changeCounter: prevState.changeCounter + 1
 
-    };
-    });
-}
+            };
+        });
+    }
     deleteNameHandler = (index) => {
         // let dpersons = this.state.persons.slice();
         let dpersons = [...this.state.persons];
@@ -86,49 +80,47 @@ class App extends Component {
     }
     togglePersonsHandler = () => {
         const doesShow = this.state.showPersons;
-        this.setState({ showPersons: !doesShow });
+        this.setState((prevState,props)=>{ 
+            return {showPersons: !doesShow,
+        changeCounter:prevState.changeCounter+1
+            }
+        });
     }
-        loginHandler=()=>{
-            this.setState({authenticated: true});
-        }
+    loginHandler = () => {
+        this.setState({ authenticated: true });
+    }
 
 
-    
+
 
     render() {
-        console.log('[App.js] render');
-        
-        let persons = null;
-        if (this.state.showPersons) {
-            persons =(
-        
-                <Persons 
-                persons={this.state.persons}
-                clicked={this.deleteNameHandler}
-            changed={this.switchNameHandler}
-            isAuthenticated={this.state.authenticated}/>);
-    
+        console.log('[App.js] inside rendering');
 
-            
-            
+
+        let persons = null;
+
+        if (this.state.showPersons) {
+            persons =
+                <Persons
+                    persons={this.state.persons}
+                    clicked={this.deleteNameHandler}
+                    changed={this.switchNameHandler} />;
+
         }
+
         return (
 
             <Aux>
-                <button  onClick={()=>{this.setState({showCockpit:false});}}>Cockpit Remove</button>
-                <AuthContext.Provider value={{authenticated:this.state.authenticated,login:this.loginHandler}}>
-                {this.state.showCockpit ? (
-               <Cockpit 
-               title={this.props.appTitle}
-               showPersons={this.state.showPersons}
-               Persons={this.state.persons}
-                clicked={this.togglePersonsHandler}
-                login={this.loginHandler}/> ):null}
-
+            <button onClick={()=>{this.setState({showPersons:true})}}> show Persons</button>
+                <Cockpit
+                    appTitle={this.props.title}
+                    showPersons={this.state.showPersons}
+                    persons={this.state.persons}
+                    clicked={this.togglePersonsHandler} />
                 {persons}
-                </AuthContext.Provider>
 
-        </Aux>
+
+            </Aux>
 
         );
         //React based elements
